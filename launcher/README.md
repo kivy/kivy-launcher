@@ -28,3 +28,4 @@ Then just start the launcher, you should see your application listed, then press
 - Different ordering: by name, last updated, size
 - Add tiny icon to show what application orientation is
 - Allow to change multiple configuration token / environemnt (like different density/dpi to simulate other screens)
+- Support for application without "android.txt"
