@@ -18,15 +18,21 @@ https://kivy.org/docs/guide/packaging-android.html#packaging-your-application-fo
 
 Then just start the launcher, you should see your application listed, then press play.
 
+## `android.txt` specification
+
+- `title`: Title of the application
+- `author`: Author of the application
+- `orientation`: Default orientation, one of "landscape", "portrait", "sensor"
+
 ## Works
 
 - Provide a simple UI to discover and start another app
 - Start another main.py as a `__name__ == '__main__'`
 - Reduce to the minimum the overhead of the launcher to launch another app
+- Support landscape / portrait / sensor
 
 ## Ideas
 
-- Support landscape / portrait
 - Act as a server to just launch any Kivy-based app from desktop to mobile
 - Ability to configure multiple paths to look for applications
 - Different ordering: by name, last updated, size

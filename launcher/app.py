@@ -133,7 +133,7 @@ class Launcher(App):
                 "data_title": entry.get("title", "- no title -"),
                 "data_path": entry.get("path"),
                 "data_logo": entry.get("logo", "data/logo/kivy-icon-64.png"),
-                "data_orientation": entry.get("orientation", "portrait"),
+                "data_orientation": entry.get("orientation", ""),
                 "data_author": entry.get("author", ""),
                 "data_entry": entry
             })
@@ -192,10 +192,12 @@ class Launcher(App):
         String = autoclass("java.lang.String")
 
         j_entrypoint = String(entry.get("entrypoint"))
+        j_orientation = String(entry.get("orientation"))
 
         intent = Intent(
             activity.getApplicationContext(),
             PythonActivity)
         intent.putExtra("entrypoint", j_entrypoint)
+        intent.putExtra("orientation", j_orientation)
         activity.startActivity(intent)
         System.exit(0)

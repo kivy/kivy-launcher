@@ -19,9 +19,21 @@ def dispatch():
         activity = autoclass("org.kivy.android.PythonActivity").mActivity
         intent = activity.getIntent()
         entrypoint = intent.getStringExtra("entrypoint")
+        orientation = intent.getStringExtra("orientation")
+
+        if orientation == "portrait":
+            # SCREEN_ORIENTATION_PORTRAIT
+            activity.setRequestedOrientation(0x1)
+        elif orientation == "landscape":
+            # SCREEN_ORIENTATION_LANDSCAPE
+            activity.setRequestedOrientation(0x0)
+        elif orientation == "sensor":
+            # SCREEN_ORIENTATION_SENSOR
+            activity.setRequestedOrientation(0x4)
+
         if entrypoint is not None:
             try:
-                run_entrypoint(entrypoint)
+                run_entrypoint(entrypoint, orientation=orientation)
                 return
             except Exception:
                 import traceback
