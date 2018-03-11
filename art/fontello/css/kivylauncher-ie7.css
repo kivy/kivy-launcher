@@ -1,0 +1,15 @@
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'kivylauncher';
+  font-style: normal;
+  font-weight: normal;
+ 
+  /* fix buttons height */
+  line-height: 1em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+}
+ 
+.icon-kivy-glyph { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x4b;&nbsp;'); }
+.icon-play { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x50;&nbsp;'); }
+.icon-cw { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x52;&nbsp;'); }

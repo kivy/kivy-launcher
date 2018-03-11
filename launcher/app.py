@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
@@ -7,13 +8,16 @@ from glob import glob
 from os.path import dirname, join, exists
 import traceback
 
+KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
+
 KV = """
 #:import rgba kivy.utils.get_color_from_hex
-#:set ICON_PLAY "a"
-#:set ICON_REFRESH "b"
+#:set ICON_PLAY "P"
+#:set ICON_REFRESH "R"
+#:set ICON_KIVY "K"
 
 <IconLabel@Label>:
-    font_name: "data/fontello.ttf"
+    font_name: "data/kivylauncher.ttf"
 
 <IconButton@ButtonBehavior+IconLabel>
     size_hint_x: None
@@ -36,21 +40,21 @@ KV = """
     spacing: dp(10)
     canvas.before:
         Color:
-            rgba: rgba("#FF9800")
+            rgba: rgba("#3F51B5")
         Rectangle:
             pos: self.pos
             size: self.size
 
-    Image:
-        source: "data/logo/kivy-icon-256.png"
+    IconLabel:
+        text: "K"
         size_hint_x: None
         width: self.height
     Label:
         text: "Kivy Launcher"
         size_hint_x: None
         width: self.texture_size[0]
-        bold: True
         font_size: dp(16)
+        font_name: "data/Roboto-Medium.ttf"
 
 
 <LauncherEntry@BoxLayout>:
@@ -64,10 +68,10 @@ KV = """
     spacing: dp(8)
     canvas.before:
         Color:
-            rgba: rgba("#607D8B")
+            rgba: rgba("#eeeef0")
         Rectangle:
-            pos: self.pos
-            size: self.size
+            pos: self.x + self.height + self.padding[0], self.y - self.padding[1] / 2.
+            size: self.width, dp(1)
 
     Image:
         source: root.data_logo
@@ -78,19 +82,24 @@ KV = """
         padding: 0, dp(4)
         LLabel:
             text: root.data_title
+            color: rgba("#454547")
+            font_name: "data/Roboto-Medium.ttf"
+            font_size: dp(13)
         LLabel:
             text: root.data_author
-            font_size: dp(12)
+            color: rgba("#b4b6b7")
+            font_size: dp(11)
     IconButton:
         text: ICON_PLAY
         on_release: app.start_activity(root.data_entry)
+        color: rgba("#b4b6b8")
 
 
 GridLayout:
     cols: 1
     canvas.before:
         Color:
-            rgba: rgba("#e0e0e0")
+            rgba: rgba("#fafafc")
         Rectangle:
             size: self.size
     TopBar
@@ -112,6 +121,8 @@ class Launcher(App):
         self.paths = [
             "/sdcard/kivy",
         ]
+        if KIVYLAUNCHER_PATHS:
+            self.paths.extend(KIVYLAUNCHER_PATHS.split(","))
         self.root = Builder.load_string(KV)
         self.refresh_entries()
 
