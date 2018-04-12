@@ -1,4 +1,10 @@
 
+.icon-plus:before { content: '\41'; } /* 'A' */
+.icon-trash-empty:before { content: '\44'; } /* 'D' */
+.icon-folder:before { content: '\46'; } /* 'F' */
+.icon-github:before { content: '\47'; } /* 'G' */
 .icon-kivy-glyph:before { content: '\4b'; } /* 'K' */
+.icon-menu:before { content: '\4d'; } /* 'M' */
 .icon-play:before { content: '\50'; } /* 'P' */
 .icon-cw:before { content: '\52'; } /* 'R' */
+.icon-sort-alt-up:before { content: '\53'; } /* 'S' */

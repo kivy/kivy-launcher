@@ -1,0 +1,186 @@
+#:import _ launcher.switchcontainer
+#:import rgba kivy.utils.get_color_from_hex
+#:set ICON_PLAY "P"
+#:set ICON_REFRESH "R"
+#:set ICON_KIVY "K"
+#:set ICON_DELETE "D"
+#:set ICON_ADD "A"
+#:set COLOR_TEXT "#454547"
+#:set COLOR_INFO "#b4b6b7"
+#:set COLOR_BACKGROUND "#3F51B5"
+#:set COLOR_BACKGROUND_DARK "#303F9F"
+#:set BUTTON_STATE {"normal": COLOR_BACKGROUND, "down": COLOR_BACKGROUND_DARK, "disabled": "#a0a0a0"}
+#:set TEXTINPUT_FOCUS {True: "#f0f0f0", False: "#e0e0e0"}
+
+<IconLabel@Label>:
+    font_name: "data/kivylauncher.ttf"
+
+
+<IconButton@ButtonBehavior+IconLabel>
+    size_hint_x: None
+    width: self.height
+    canvas.before:
+        Color:
+            rgba: rgba("#ffffff66") if self.state == "down" else rgba("#00000000")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<Button>:
+    background_normal: "data/white.png"
+    background_down: "data/white.png"
+    background_disabled_down: "data/white.png"
+    background_disabled_normal: "data/white.png"
+    background_color: rgba(BUTTON_STATE["disabled" if self.disabled else self.state])
+
+<TextInput>:
+    background_normal: "data/images/white.png"
+    background_active: "data/images/white.png"
+    background_color: rgba(TEXTINPUT_FOCUS[self.focus])
+    padding: int(sp(12)), int(sp(14))
+
+<LLabel@Label>:
+    text_size: self.width, None
+
+
+<TopBar@GridLayout>:
+    rows: 1
+    padding: dp(4)
+    size_hint_y: None
+    height: dp(48)
+    spacing: dp(5)
+    canvas.before:
+        Color:
+            rgba: rgba(COLOR_BACKGROUND)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    IconButton:
+        text: "K"
+        size_hint_x: None
+        width: self.height
+        on_release: app.form_index = 0
+    Label:
+        text: "Kivy Launcher"
+        size_hint_x: None
+        width: self.texture_size[0]
+        font_size: dp(16)
+        font_name: "data/Roboto-Medium.ttf"
+    Widget
+    IconButton:
+        text: ICON_ADD
+        size_hint_x: None
+        width: self.height
+        on_release: app.form_index = 1
+    # IconButton:
+    #     text: "M"
+    #     size_hint_x: None
+    #     width: self.height
+
+
+<LauncherEntry@BoxLayout>:
+    data_can_refresh: False
+    data_can_run: False
+    data_title: ""
+    data_orientation: ""
+    data_logo: "data/logo/kivy-icon-64.png"
+    data_author: ""
+    data_entry: None
+    padding: dp(4)
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: rgba("#eeeef0")
+        Rectangle:
+            pos: self.x + self.height + self.padding[0], self.y - self.padding[1] / 2.
+            size: self.width, dp(1)
+
+    Image:
+        source: root.data_logo
+        size_hint_x: None
+        width: self.height
+    BoxLayout:
+        orientation: "vertical"
+        padding: 0, dp(4)
+        LLabel:
+            text: root.data_title
+            color: rgba(COLOR_TEXT)
+            font_name: "data/Roboto-Medium.ttf"
+            font_size: dp(13)
+        LLabel:
+            text: root.data_author
+            color: rgba(COLOR_INFO)
+            font_size: dp(11)
+
+    IconButton:
+        text: ICON_DELETE
+        color: rgba("#b4b6b8")
+        opacity: int(root.data_can_refresh)
+        disabled: not root.data_can_refresh
+        on_release: app.delete_entry(root.data_entry)
+
+    IconButton:
+        text: ICON_REFRESH
+        color: rgba("#b4b6b8")
+        opacity: int(root.data_can_refresh)
+        disabled: not root.data_can_refresh
+        on_release: app.refresh_entry(root.data_entry)
+
+    IconButton:
+        text: ICON_PLAY
+        on_release: app.start_activity(root.data_entry)
+        color: rgba("#b4b6b8")
+        opacity: int(root.data_can_run)
+        disabled: not root.data_can_run
+
+
+<AddForm>:
+    padding: dp(20)
+    spacing: dp(4)
+    cols: 1
+    Label:
+        text: "URL to a project (only public gist/github)"
+        color: rgba(COLOR_TEXT)
+        text_size: self.width, None
+        size_hint_y: None
+        height: max(dp(24), self.texture_size[1])
+
+    TextInput
+        id: ti
+        size_hint_y: None
+        height: dp(48)
+        hint_text: "https://gist.github.com/12345..."
+        multiline: False
+        on_text: root.validate_uri(self.text)
+
+    Button:
+        text: "Add"
+        size_hint_y: None
+        height: dp(48)
+        disabled: not root.form_ok
+        on_release: root.add(ti.text)
+
+
+<LauncherContent>:
+    cols: 1
+    canvas.before:
+        Color:
+            rgba: rgba("#fafafc")
+        Rectangle:
+            size: self.size
+    TopBar
+    SwitchContainer:
+        index: app.form_index
+        RecycleView:
+            id: rv
+            viewclass: "LauncherEntry"
+            RecycleBoxLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: "vertical"
+                spacing: dp(2)
+                default_size: None, dp(48)
+                default_size_hint: 1, None
+        AddForm
