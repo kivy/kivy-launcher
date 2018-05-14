@@ -177,10 +177,14 @@ class Launcher(App):
             self.start_desktop_activity(entry)
 
     def start_desktop_activity(self, entry):
-        entrypoint = entry["entrypoint"]
         import sys
         from subprocess import Popen
-        cmd = Popen([sys.executable, entrypoint])
+        entrypoint = entry["entrypoint"]
+        env = os.environ.copy()
+        env["KIVYLAUNCHER_ENTRYPOINT"] = entrypoint
+        main_py = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), "..", "main.py"))
+        cmd = Popen([sys.executable, main_py], env=env)
         cmd.communicate()
 
     def start_android_activity(self, entry):

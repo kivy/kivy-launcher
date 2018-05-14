@@ -3,6 +3,10 @@
 
 def run_entrypoint(entrypoint):
     import runpy
+    import sys
+    import os
+    entrypoint_path = os.path.dirname(entrypoint)
+    sys.path.append(os.path.realpath(entrypoint_path))
     runpy.run_path(
         entrypoint,
         run_name="__main__")
@@ -14,6 +18,15 @@ def run_launcher(tb=None):
 
 
 def dispatch():
+    import os
+
+    # desktop launch
+    print("dispathc!")
+    entrypoint = os.environ.get("KIVYLAUNCHER_ENTRYPOINT")
+    if entrypoint is not None:
+        return run_entrypoint(entrypoint)
+
+    # try android
     try:
         from jnius import autoclass
         activity = autoclass("org.kivy.android.PythonActivity").mActivity
@@ -33,8 +46,7 @@ def dispatch():
 
         if entrypoint is not None:
             try:
-                run_entrypoint(entrypoint)
-                return
+                return run_entrypoint(entrypoint)
             except Exception:
                 import traceback
                 traceback.print_exc()
