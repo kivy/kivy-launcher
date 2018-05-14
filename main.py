@@ -33,7 +33,7 @@ def dispatch():
 
         if entrypoint is not None:
             try:
-                run_entrypoint(entrypoint, orientation=orientation)
+                run_entrypoint(entrypoint)
                 return
             except Exception:
                 import traceback
