@@ -152,6 +152,9 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
 
+# (str) launchMode to set for the main activity
+android.manifest.launch_mode = standard
+
 # (list) Android additionnal libraries to copy into libs/armeabi
 #android.add_libs_armeabi = libs/android/*.so
 #android.add_libs_armeabi_v7a = libs/android-v7/*.so
