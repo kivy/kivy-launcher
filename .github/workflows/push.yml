@@ -1,0 +1,15 @@
+on: push
+name: on push
+jobs:
+  Build:
+    steps:
+    - uses: docker://kivy/buildozer
+    - name: build apk
+      with:
+        entrypoint: buildozer android debug
+
+    - uses: actions/upload-artifact@master
+    - name: save apk
+      with:
+        name: launcher-0.1-debug.apk
+        path: bin/
