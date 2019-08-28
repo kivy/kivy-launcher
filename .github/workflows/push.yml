@@ -2,6 +2,8 @@ on: push
 name: on push
 jobs:
   Build:
+    name: build
+    runs-on: ubuntu-latest
     steps:
     - name: build apk
       uses: docker://kivy/buildozer
