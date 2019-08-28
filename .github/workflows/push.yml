@@ -3,13 +3,13 @@ name: on push
 jobs:
   Build:
     steps:
-    - uses: docker://kivy/buildozer
     - name: build apk
+      uses: docker://kivy/buildozer
       with:
         entrypoint: buildozer android debug
 
-    - uses: actions/upload-artifact@master
     - name: save apk
+      uses: actions/upload-artifact@master
       with:
         name: launcher-0.1-debug.apk
         path: bin/
