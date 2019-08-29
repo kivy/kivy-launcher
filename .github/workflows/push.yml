@@ -7,8 +7,6 @@ jobs:
     steps:
     - name: build apk
       uses: docker://kivy/buildozer
-      with:
-        entrypoint: buildozer android debug
 
     - name: save apk
       uses: actions/upload-artifact@master
