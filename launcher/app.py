@@ -4,13 +4,14 @@ import os
 from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
+from kivy.properties import ListProperty
 from glob import glob
 from os.path import dirname, join, exists
 import traceback
 
 KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
 
-KV = """
+KV = r"""
 #:import rgba kivy.utils.get_color_from_hex
 #:set ICON_PLAY "P"
 #:set ICON_REFRESH "R"
@@ -103,20 +104,33 @@ GridLayout:
         Rectangle:
             size: self.size
     TopBar
-    RecycleView:
-        id: rv
-        viewclass: "LauncherEntry"
-        RecycleBoxLayout:
-            size_hint_y: None
-            height: self.minimum_height
-            orientation: "vertical"
-            spacing: dp(2)
-            default_size: None, dp(48)
-            default_size_hint: 1, None
+    FloatLayout:
+        RecycleView:
+            id: rv
+            pos_hint: {'pos': (0, 0)}
+            viewclass: "LauncherEntry"
+            RecycleBoxLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: "vertical"
+                spacing: dp(2)
+                default_size: None, dp(48)
+                default_size_hint: 1, None
+
+        Label:
+            text:
+                '''
+                Please install applications in one of the following directories
+                - {}
+                '''.format('\n -'.join(app.paths))
+            color: rgba("#222222")
+
 """
 
 
 class Launcher(App):
+    paths = ListProperty()
+
     def build(self):
         self.paths = [
             "/sdcard/kivy",
