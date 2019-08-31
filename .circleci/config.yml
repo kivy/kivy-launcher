@@ -1,0 +1,32 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: kivy/buildozer
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - buildozer-home-{{ checksum "buildozer.spec" }}
+            # fallback to using the latest cache if no exact match is found
+            - buildozer-home-
+
+      - run:
+          name: build
+          command: |
+            yes | buildozer android debug || echo "done"
+
+      - save_cache:
+          paths:
+            - .buildozer
+            - ~/.buildozer
+          key: buildozer-home-{{ checksum "buildozer.spec" }}
+
+      - store_artifacts:
+          path: bin/
+          destination: bin/
