@@ -1,4 +1,3 @@
-version: 2
 jobs:
   build:
     docker:
@@ -30,3 +29,36 @@ jobs:
       - store_artifacts:
           path: bin/
           destination: bin/
+
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:latest
+
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(git describe --tag)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+
+      - publish-github-release:
+          requires:
+            - build
+
+          filters:
+            branches:
+              ignore: /.*/
+
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
