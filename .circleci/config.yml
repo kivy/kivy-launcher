@@ -1,3 +1,4 @@
+version: 2
 jobs:
   build:
     docker:
@@ -50,7 +51,7 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^v\d+\.\d+\.\d+$/
 
       - publish-github-release:
           requires:
