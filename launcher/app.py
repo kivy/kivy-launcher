@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+from time import time
 from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, BooleanProperty
 from glob import glob
 from os.path import dirname, join, exists
 import traceback
@@ -12,6 +13,7 @@ import traceback
 KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
 
 KV = r"""
+#:import A kivy.animation.Animation
 #:import rgba kivy.utils.get_color_from_hex
 #:set ICON_PLAY "P"
 #:set ICON_REFRESH "R"
@@ -47,7 +49,7 @@ KV = r"""
             size: self.size
 
     IconLabel:
-        text: "K"
+        text: ICON_KIVY
         size_hint_x: None
         width: self.height
     Label:
@@ -56,6 +58,17 @@ KV = r"""
         width: self.texture_size[0]
         font_size: dp(16)
         font_name: "data/Roboto-Medium.ttf"
+
+    IconButton:
+        text: ICON_REFRESH
+        on_press:
+            app.refresh_entries()
+
+    ToggleButton:
+        text: 'Logs'
+        state: 'down' if app.display_logs else 'normal'
+        on_state:
+            app.display_logs = self.state == 'down'
 
 
 <LauncherEntry@BoxLayout>:
@@ -117,21 +130,56 @@ GridLayout:
                 default_size: None, dp(48)
                 default_size_hint: 1, None
 
+        RecycleView:
+            viewclass: 'LogLabel'
+            data: [{'text': log} for log in app.logs]
+            _top: 0
+            pos_hint: {'top': self._top, 'x': 0}
+            visible: app.display_logs
+            on_visible:
+                A.cancel_all(self, '_top')
+                A(_top=1 if self.visible else 0, d=.3, t='out_quad').start(self)
+
+            canvas.before:
+                Color:
+                    rgba: rgba("#CCCCCCCC")
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                height: self.minimum_height
+                default_size_hint: None, None
+                default_size: 0, 20
+                padding: 5, 5
+
         Label:
             text:
                 '''
                 Please install applications in one of the following directories
                 - {}
                 '''.format('\n -'.join(app.paths))
-            color: rgba("#222222")
+            pos_hint: {'pos': (0, 0)}
+            color: rgba("#222222" if not rv.data else "#00000000")
 
+<LogLabel@Label>:
+    color: rgba("#222222FF")
+    # pos_hint: {'x': 0}
+    width: self.texture_size[0]
 """
 
 
 class Launcher(App):
     paths = ListProperty()
+    logs = ListProperty()
+    display_logs = BooleanProperty(False)
+
+    def log(self, log):
+        self.logs.append(f'{time()}: {log}')
 
     def build(self):
+        self.log('start of log')
         self.paths = [
             "/sdcard/kivy",
         ]
