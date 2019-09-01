@@ -198,7 +198,7 @@ class Launcher(App):
         data = []
         self.log('starting refresh')
         for entry in self.find_entries(paths=self.paths):
-            self.logs(f'found entry {entry}')
+            self.log(f'found entry {entry}')
             data.append({
                 "data_title": entry.get("title", "- no title -"),
                 "data_path": entry.get("path"),
