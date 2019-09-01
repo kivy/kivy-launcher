@@ -216,6 +216,8 @@ class Launcher(App):
             if not exists(path):
                 self.log(f'{path} does not exist')
                 return
+
+            self.log('{os.listdir(path)}')
             for filename in glob("{}/*/android.txt".format(path)):
                 self.log(f'{filename} exist')
                 entry = self.read_entry(filename)
