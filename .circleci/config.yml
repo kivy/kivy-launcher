@@ -10,11 +10,15 @@ jobs:
       - checkout
 
       # Download and cache dependencies
+      - run:
+          name: prepare cache setup
+          command: echo "$CACHE_VERSION" > cache_version
+
       - restore_cache:
           keys:
-            - buildozer-home-{{ checksum "buildozer.spec" }}
+            - buildozer-home-{{ checksum "cache_version" }}-{{ checksum "buildozer.spec" }}
             # fallback to using the latest cache if no exact match is found
-            - buildozer-home-
+            - buildozer-home-{{ checksum "cache_version" }}
 
       - run:
           name: build
@@ -29,7 +33,7 @@ jobs:
           paths:
             - .buildozer
             - ~/.buildozer
-          key: buildozer-home-{{ checksum "buildozer.spec" }}
+          key: buildozer-home-{{ checksum "cache_version" }}-{{ checksum "buildozer.spec" }}
 
   publish-github-release:
     docker:
