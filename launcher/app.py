@@ -265,6 +265,7 @@ class Launcher(App):
         cmd.communicate()
 
     def start_android_activity(self, entry):
+        self.log('starting activity')
         from jnius import autoclass
         PythonActivity = autoclass("org.kivy.android.PythonActivity")
         System = autoclass("java.lang.System")
@@ -275,10 +276,14 @@ class Launcher(App):
         j_entrypoint = String(entry.get("entrypoint"))
         j_orientation = String(entry.get("orientation"))
 
+        self.log('creating intent')
         intent = Intent(
             activity.getApplicationContext(),
-            PythonActivity)
+            PythonActivity
+        )
         intent.putExtra("entrypoint", j_entrypoint)
         intent.putExtra("orientation", j_orientation)
+        self.log(f'ready to start intent {j_entrypoint} {j_orientation}')
         activity.startActivity(intent)
+        self.log(f'activity started')
         System.exit(0)

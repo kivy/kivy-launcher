@@ -97,7 +97,7 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE
 #android.sdk = 20
 
 # (str) Android NDK version to use
-#android.ndk = 9c
+# android.ndk = 19b
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -147,14 +147,7 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE
 #android.gradle_dependencies =
 
 # (str) python-for-android branch to use, defaults to stable
-#p4a.branch = stable
-
-# (str) OUYA Console category. Should be one of GAME or APP
-# If you leave this blank, OUYA support will not be enabled
-#android.ouya.category = GAME
-
-# (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-#android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
+# p4a.branch = stable
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
@@ -223,7 +216,7 @@ android.arch = armeabi-v7a
 log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
-warn_on_root = 1
+warn_on_root = 0
 
 # (str) Path to build artifact storage, absolute or relative to spec file
 # build_dir = ./.buildozer
