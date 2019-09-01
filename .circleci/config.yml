@@ -12,9 +12,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - buildozer-home-4-{{ checksum "buildozer.spec" }}
+            - buildozer-home-{{ checksum "buildozer.spec" }}
             # fallback to using the latest cache if no exact match is found
-            - buildozer-home-4-
+            - buildozer-home-
 
       - run:
           name: build
@@ -29,7 +29,7 @@ jobs:
           paths:
             - .buildozer
             - ~/.buildozer
-          key: buildozer-home-4-{{ checksum "buildozer.spec" }}
+          key: buildozer-home-{{ checksum "buildozer.spec" }}
 
   publish-github-release:
     docker:
