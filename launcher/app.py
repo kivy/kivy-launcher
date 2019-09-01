@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from time import time
+from datetime import datetime
 from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
@@ -149,6 +149,7 @@ GridLayout:
 
             RecycleBoxLayout:
                 orientation: 'vertical'
+                size_hint_y: None
                 height: self.minimum_height
                 default_size_hint: None, None
                 default_size: 0, 20
@@ -165,7 +166,7 @@ GridLayout:
 
 <LogLabel@Label>:
     color: rgba("#222222FF")
-    # pos_hint: {'x': 0}
+    pos_hint: {'x': 0}
     width: self.texture_size[0]
 """
 
@@ -176,7 +177,8 @@ class Launcher(App):
     display_logs = BooleanProperty(False)
 
     def log(self, log):
-        self.logs.append(f'{time()}: {log}')
+        print(log)
+        self.logs.append(f"{datetime.now().strftime('%X.%f')}: {log}")
 
     def build(self):
         self.log('start of log')
@@ -190,7 +192,9 @@ class Launcher(App):
 
     def refresh_entries(self):
         data = []
+        self.log('starting refresh')
         for entry in self.find_entries(paths=self.paths):
+            self.logs(f'found entry {entry}')
             data.append({
                 "data_title": entry.get("title", "- no title -"),
                 "data_path": entry.get("path"),
@@ -202,19 +206,24 @@ class Launcher(App):
         self.root.ids.rv.data = data
 
     def find_entries(self, path=None, paths=None):
+        self.log(f'looking for entries in {paths} or {path}')
         if paths is not None:
             for path in paths:
                 for entry in self.find_entries(path=path):
                     yield entry
+
         elif path is not None:
             if not exists(path):
+                self.log(f'{path} does not exist')
                 return
             for filename in glob("{}/*/android.txt".format(path)):
+                self.log(f'{filename} exist')
                 entry = self.read_entry(filename)
                 if entry:
                     yield entry
 
     def read_entry(self, filename):
+        self.log(f'reading entry {filename}')
         data = {}
         try:
             with open(filename, "r") as fd:
