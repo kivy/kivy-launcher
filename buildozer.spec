@@ -97,7 +97,7 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE
 #android.sdk = 20
 
 # (str) Android NDK version to use
-# android.ndk = 19b
+android.ndk = 19b
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -147,7 +147,7 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE
 #android.gradle_dependencies =
 
 # (str) python-for-android branch to use, defaults to stable
-# p4a.branch = stable
+p4a.branch = master
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
