@@ -244,7 +244,7 @@ class Launcher(App):
                 for line in lines:
                     k, v = line.strip().split("=", 1)
                     data[k] = v
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             return None
         data["entrypoint"] = join(dirname(filename), "main.py")
@@ -292,5 +292,5 @@ class Launcher(App):
         intent.putExtra("orientation", j_orientation)
         self.log(f'ready to start intent {j_entrypoint} {j_orientation}')
         activity.startActivity(intent)
-        self.log(f'activity started')
+        self.log('activity started')
         System.exit(0)
