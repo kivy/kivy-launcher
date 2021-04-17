@@ -2,10 +2,9 @@
 
 import os
 from datetime import datetime
-from kivy.lang import Builder, builder
+from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
-from kivy.lang import Builder
 from kivy.properties import ListProperty, BooleanProperty
 from glob import glob
 from os.path import dirname, join, exists
