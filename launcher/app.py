@@ -184,13 +184,15 @@ class Launcher(App):
         self.log('start of log')
         if KIVYLAUNCHER_PATHS:
             self.paths.extend(KIVYLAUNCHER_PATHS.split(","))
-        else:
+
+        if platform == 'android':
             from jnius import autoclass
             Environment = autoclass('android.os.Environment')
-            sdcard_path = Environment.getExternalStorageDirectory().getAbsolutePath()
-            self.paths = [
-                sdcard_path + "/kivy",
-            ]
+            sdcard_path = Environment.getExternalStorageDirectory()\
+                .getAbsolutePath()
+            self.paths = [sdcard_path + "/kivy"]
+        else:
+            self.paths = [os.path.expanduser("~/kivy")]
 
         self.root = Builder.load_string(KV)
         self.refresh_entries()
