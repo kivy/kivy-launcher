@@ -1,0 +1,3 @@
+kivy==2.0.0
+pyjnius==1.3.0
+buildozer==1.2.0
