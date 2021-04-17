@@ -65,7 +65,7 @@ KV = r"""
             app.refresh_entries()
 
     ToggleButton:
-        text: 'Logs'
+        text: 'Show logs' if self.state == 'normal' else 'Hide logs'
         state: 'down' if app.display_logs else 'normal'
         on_state:
             app.display_logs = self.state == 'down'
