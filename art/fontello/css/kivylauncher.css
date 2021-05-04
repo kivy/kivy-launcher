@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'kivylauncher';
-  src: url('../font/kivylauncher.eot?27876560');
-  src: url('../font/kivylauncher.eot?27876560#iefix') format('embedded-opentype'),
-       url('../font/kivylauncher.woff2?27876560') format('woff2'),
-       url('../font/kivylauncher.woff?27876560') format('woff'),
-       url('../font/kivylauncher.ttf?27876560') format('truetype'),
-       url('../font/kivylauncher.svg?27876560#kivylauncher') format('svg');
+  src: url('../font/kivylauncher.eot?53678162');
+  src: url('../font/kivylauncher.eot?53678162#iefix') format('embedded-opentype'),
+       url('../font/kivylauncher.woff2?53678162') format('woff2'),
+       url('../font/kivylauncher.woff?53678162') format('woff'),
+       url('../font/kivylauncher.ttf?53678162') format('truetype'),
+       url('../font/kivylauncher.svg?53678162#kivylauncher') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'kivylauncher';
-    src: url('../font/kivylauncher.svg?27876560#kivylauncher') format('svg');
+    src: url('../font/kivylauncher.svg?53678162#kivylauncher') format('svg');
   }
 }
 */
@@ -24,7 +24,7 @@
   font-family: "kivylauncher";
   font-style: normal;
   font-weight: normal;
-  speak: none;
+  speak: never;
  
   display: inline-block;
   text-decoration: inherit;
@@ -58,3 +58,4 @@
 .icon-kivy-glyph:before { content: '\4b'; } /* 'K' */
 .icon-play:before { content: '\50'; } /* 'P' */
 .icon-cw:before { content: '\52'; } /* 'R' */
+.icon-pencil:before { content: '\e800'; } /* '' */

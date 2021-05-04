@@ -103,6 +103,10 @@ class Launcher(App):
         else:
             self.start_desktop_activity(entry)
 
+    def edit_activity(self, entry):
+        print(f"edit activity {entry}")
+        pass
+
     def start_desktop_activity(self, entry):
         import sys
         from subprocess import Popen

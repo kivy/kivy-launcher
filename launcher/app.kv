@@ -1,5 +1,6 @@
 #:import A kivy.animation.Animation
 #:import rgba kivy.utils.get_color_from_hex
+#:set ICON_EDIT chr(59392)
 #:set ICON_PLAY "P"
 #:set ICON_REFRESH "R"
 #:set ICON_KIVY "K"
@@ -88,6 +89,10 @@
             text: root.data_author
             color: rgba("#b4b6b7")
             font_size: dp(11)
+    IconButton:
+        text: ICON_EDIT
+        on_release: app.edit_activity(root.data_entry)
+        color: rgba("#b4b6b8")
     IconButton:
         text: ICON_PLAY
         on_release: app.start_activity(root.data_entry)
