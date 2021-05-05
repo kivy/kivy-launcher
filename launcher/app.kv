@@ -21,7 +21,7 @@
 <LLabel@Label>:
     text_size: self.width, None
 
-<TopBar@GridLayout>:
+<BarBase@GridLayout>:
     rows: 1
     padding: dp(4)
     size_hint_y: None
@@ -34,6 +34,7 @@
             pos: self.pos
             size: self.size
 
+<TopBar@BarBase>:
     IconLabel:
         text: ICON_KIVY
         size_hint_x: None
@@ -50,18 +51,7 @@
         on_press:
             app.refresh_entries()
 
-<BottomBar@GridLayout>:
-    rows: 1
-    padding: dp(4)
-    size_hint_y: None
-    height: dp(48)
-    spacing: dp(10)
-    canvas.before:
-        Color:
-            rgba: rgba("#3F51B5")
-        Rectangle:
-            pos: self.pos
-            size: self.size
+<BottomBar@BarBase>:
 
     ToggleButton:
         text: 'Show logs' if self.state == 'normal' else 'Hide logs'
