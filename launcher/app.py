@@ -9,6 +9,8 @@ from kivy.properties import ListProperty, BooleanProperty
 from glob import glob
 from os.path import dirname, join, exists
 import traceback
+from shutil import copytree
+
 
 KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
 
@@ -36,6 +38,7 @@ class Launcher(App):
             self.paths = [sdcard_path + "/kivy"]
         else:
             self.paths = [os.path.expanduser("~/kivy")]
+        self.create_templates(self.paths[0])
 
         self.root = Builder.load_file("launcher/app.kv")
         self.refresh_entries()
@@ -141,3 +144,12 @@ class Launcher(App):
         activity.startActivity(intent)
         self.log('activity started')
         System.exit(0)
+
+    def create_templates(self, kivy_path):
+        """Create the initial templates if a kivy folder does not  exist."""
+        if not exists(kivy_path):
+            try:
+                # os.mkdir(kivy_path)
+                copytree('./templates', kivy_path)
+            except Exception as e:
+                self.log(f"Unable to create templates: {e}")
