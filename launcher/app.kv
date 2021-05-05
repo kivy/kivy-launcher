@@ -59,6 +59,21 @@
         on_state:
             app.display_logs = self.state == 'down'
 
+<EditorBottomBar@BarBase>:
+
+    Button:
+        text: 'Save'
+    Button:
+        text: 'Close'
+
+<GridLayoutBase@GridLayout>:
+    cols: 1
+    canvas.before:
+        Color:
+            rgba: rgba("#fafafc")
+        Rectangle:
+            size: self.size
+
 
 <LauncherEntry@BoxLayout>:
     data_title: ""
@@ -109,13 +124,7 @@
 ScreenManager:
     Screen:
         name: "launcher"
-        GridLayout:
-            cols: 1
-            canvas.before:
-                Color:
-                    rgba: rgba("#fafafc")
-                Rectangle:
-                    size: self.size
+        GridLayoutBase:
             TopBar
             FloatLayout:
                 RecycleView:
@@ -166,7 +175,8 @@ ScreenManager:
             BottomBar
     Screen:
         name: "editor"
-        BoxLayout:
+        GridLayoutBase:
             CodeInput:
                 id: code_editor
                 text: "Code editor"
+            EditorBottomBar
