@@ -50,6 +50,19 @@
         on_press:
             app.refresh_entries()
 
+<BottomBar@GridLayout>:
+    rows: 1
+    padding: dp(4)
+    size_hint_y: None
+    height: dp(48)
+    spacing: dp(10)
+    canvas.before:
+        Color:
+            rgba: rgba("#3F51B5")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     ToggleButton:
         text: 'Show logs' if self.state == 'normal' else 'Hide logs'
         state: 'down' if app.display_logs else 'normal'
@@ -160,6 +173,7 @@ ScreenManager:
                         '''.format('\n -'.join(app.paths))
                     pos_hint: {'pos': (0, 0)}
                     color: rgba("#222222" if not rv.data else "#00000000")
+            BottomBar
     Screen:
         name: "editor"
         BoxLayout:
