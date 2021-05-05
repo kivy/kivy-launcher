@@ -5,7 +5,7 @@ from datetime import datetime
 from kivy.lang import Builder
 from kivy.app import App
 from kivy.utils import platform
-from kivy.properties import ListProperty, BooleanProperty
+from kivy.properties import ListProperty, BooleanProperty, ObjectProperty
 from glob import glob
 from os.path import dirname, join, exists
 import traceback
@@ -19,6 +19,7 @@ class Launcher(App):
     paths = ListProperty()
     logs = ListProperty()
     display_logs = BooleanProperty(False)
+    current_entry = ObjectProperty()
 
     def log(self, log):
         print(log)
@@ -111,7 +112,20 @@ class Launcher(App):
         with open(entry['entrypoint'], "r") as f:
             self.root.ids.code_editor.text = f.read()
 
+        self.current_entry = entry
         self.root.current = "editor"
+
+    def edit_activity_save(self):
+        """Save the editing activity."""
+        with open(self.current_entry['entrypoint'], "w") as f:
+            f.write(self.root.ids.code_editor.text)
+
+        self.root.current = "launcher"
+
+    def edit_activity_close(self):
+        """Close the editing activity."""
+        self.root.current = "launcher"
+
 
     def start_desktop_activity(self, entry):
         import sys
