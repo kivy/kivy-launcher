@@ -107,8 +107,11 @@ class Launcher(App):
             self.start_desktop_activity(entry)
 
     def edit_activity(self, entry):
-        print(f"edit activity {entry}")
-        pass
+        """Open the selected activity in our  code launcher."""
+        with open(entry['entrypoint'], "r") as f:
+            self.root.ids.code_editor.text = f.read()
+
+        self.root.current = "editor"
 
     def start_desktop_activity(self, entry):
         import sys
