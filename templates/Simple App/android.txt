@@ -1,0 +1,3 @@
+title=Simple App
+author=Kivy team
+orientation=landscape
