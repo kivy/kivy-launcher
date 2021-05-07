@@ -1,6 +1,6 @@
 """This file contains a simple, editable app for the Kivy launcher.
 
-Play, break an modiy at will. :-)
+Play, break an modify at will. :-)
 """
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
