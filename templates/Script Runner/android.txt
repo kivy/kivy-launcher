@@ -1,0 +1,3 @@
+title=Script Runner
+author=Kivy team
+orientation=landscape
