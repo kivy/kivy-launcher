@@ -8,25 +8,19 @@ from kivy.lang.builder import Builder
 from textwrap import dedent
 
 KV = dedent('''
-<MainBox>:
+BoxLayout:
     Button:
         text: "Close me"
-        on_press: root.app.stop()
+        on_press: app.stop()
     Button:
         text: "Change me"
         on_press: self.text = "Press" if self.text == "Click" else "Click"
 ''')
 
-class  MainBox(BoxLayout):
-    def __init__(self, app):
-        super().__init__()
-        self.app = app
-
 
 class TestApp(App):
     def  build(self):
-        Builder.load_string(KV)
-        return MainBox(app=self)
+        return Builder.load_string(KV)
 
 
 TestApp().run()
