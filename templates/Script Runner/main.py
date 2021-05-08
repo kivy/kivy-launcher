@@ -25,6 +25,17 @@ KV = dedent('''
 
 BoxLayout:
     orientation: 'vertical'
+    Label:
+        canvas.before:
+            Color:
+                rgba: 0.2, 0.2, 0.6, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size_hint_y: None
+        height: "40dp"
+        text: 'Script Runner'
+        font_size: '20dp'
     BoxLayout:
         orientation: 'vertical'
         CodeInput:
