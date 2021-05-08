@@ -49,6 +49,7 @@ class Launcher(App):
 
             self.create_templates(self.paths[0])
         except Exception as e:
+            self.paths = []
             self.log(f"Error {e}")
 
         self.root = Builder.load_file("launcher/app.kv")
