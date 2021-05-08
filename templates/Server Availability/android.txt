@@ -1,0 +1,3 @@
+title=Server Availability
+author=Kivy team
+orientation=landscape
