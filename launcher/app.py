@@ -15,6 +15,22 @@ from shutil import copytree
 KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
 
 
+class Paths:
+    """Class providing OS appropriate paths."""
+
+    @staticmethod
+    def get_script_path():
+        """Return a writeable path in which to copy our laucher templates."""
+        if platform == 'android':
+            from jnius import autoclass
+            Environment = autoclass('android.os.Environment')
+            sdcard_path = Environment.getExternalStorageDirectory()\
+                .getAbsolutePath()
+            return sdcard_path + "/kivy"
+        else:
+            return os.path.expanduser("~/kivy")
+
+
 class Launcher(App):
     paths = ListProperty()
     logs = ListProperty()
@@ -27,26 +43,13 @@ class Launcher(App):
 
     def build(self):
         self.log('start of log')
-
+        self.paths = [Paths.get_script_path()]
         if KIVYLAUNCHER_PATHS:
             self.paths.extend(KIVYLAUNCHER_PATHS.split(","))
 
-        if platform == 'android':
-            from jnius import autoclass
-            Environment = autoclass('android.os.Environment')
-            sdcard_path = Environment.getExternalStorageDirectory()\
-                .getAbsolutePath()
-            self.paths = [sdcard_path + "/kivy"]
-        else:
-            self.paths = [os.path.expanduser("~/kivy")]
         self.create_templates(self.paths[0])
-
         self.root = Builder.load_file("launcher/app.kv")
         self.refresh_entries()
-
-        if platform == 'android':
-            from android.permissions import request_permissions, Permission
-            request_permissions([Permission.READ_EXTERNAL_STORAGE])
 
     def refresh_entries(self):
         data = []
