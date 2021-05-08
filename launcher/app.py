@@ -22,28 +22,11 @@ class Paths:
     def get_script_path():
         """Return a writeable path in which to copy our laucher templates."""
         if platform == 'android':
-            script_dir = Paths.get_android_script_path()
+            from android.storage import app_storage_path
+            script_dir = app_storage_path()
             return f'{script_dir}/kivy'
         else:
             return os.path.expanduser("~/kivy")
-
-    def get_android_script_path():
-        """
-        Wrapper to Android getFilesDir().
-        Works for both PythonActivity and PythonService.
-        https://developer.android.com/reference/android/content/Context.html
-        """
-        from jnius import autoclass, cast
-        PythonActivity = autoclass('org.kivy.android.PythonActivity')
-        activity = PythonActivity.mActivity
-        if activity is None:
-            # assume we're running from the background service
-            PythonService = autoclass('org.kivy.android.PythonService')
-            activity = PythonService.mService
-        context = cast('android.content.Context', activity)
-        file_p = cast('java.io.File', context.getFilesDir())
-        data_dir = file_p.getAbsolutePath()
-        return data_dir
 
 
 class Launcher(App):
