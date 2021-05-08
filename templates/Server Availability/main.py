@@ -16,6 +16,17 @@ BoxLayout:
     Label:
         canvas.before:
             Color:
+                rgba: 0.2, 0.2, 0.6, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size_hint_y: None
+        height: "40dp"
+        text: 'Server Availability Checker'
+        font_size: '20dp'
+    Label:
+        canvas.before:
+            Color:
                 rgba: 0.2, 0.2, 0.2, 1
             Rectangle:
                 pos: self.pos
