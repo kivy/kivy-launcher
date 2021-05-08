@@ -14,6 +14,12 @@ KV = dedent('''
 BoxLayout:
     orientation: 'vertical'
     Label:
+        canvas.before:
+            Color:
+                rgba: 0.2, 0.2, 0.2, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: output_label
         text: 'Tap "Run" to start.'
     BoxLayout:
