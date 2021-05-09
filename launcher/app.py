@@ -133,7 +133,6 @@ class Launcher(App):
         """Close the editing activity."""
         self.root.current = "launcher"
 
-
     def start_desktop_activity(self, entry):
         import sys
         from subprocess import Popen
