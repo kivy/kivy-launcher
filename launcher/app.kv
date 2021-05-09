@@ -122,6 +122,7 @@
     color: rgba("#222222FF")
     pos_hint: {'x': 0}
     width: self.texture_size[0]
+    font_size: "16dp"
 
 ScreenManager:
     Screen:
@@ -163,7 +164,7 @@ ScreenManager:
                         size_hint_y: None
                         height: self.minimum_height
                         default_size_hint: None, None
-                        default_size: 0, 20
+                        default_size: 0, dp(24)
                         padding: 5, 5
 
                 Label:
