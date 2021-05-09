@@ -15,20 +15,6 @@ from shutil import copytree
 KIVYLAUNCHER_PATHS = os.environ.get("KIVYLAUNCHER_PATHS")
 
 
-class Paths:
-    """Class providing OS appropriate paths."""
-
-    @staticmethod
-    def get_script_path():
-        """Return a writeable path in which to copy our laucher templates."""
-        if platform == 'android':
-            from android.storage import app_storage_path
-            script_dir = app_storage_path()
-            return f'{script_dir}/kivy'
-        else:
-            return os.path.expanduser("~/kivy")
-
-
 class Launcher(App):
     paths = ListProperty()
     logs = ListProperty()
@@ -43,7 +29,7 @@ class Launcher(App):
         self.log('start of log')
 
         try:
-            self.paths = [Paths.get_script_path()]
+            self.paths = [f'{self._get_user_data_dir()}/apps']
             if KIVYLAUNCHER_PATHS:
                 self.paths.extend(KIVYLAUNCHER_PATHS.split(","))
 
@@ -82,9 +68,9 @@ class Launcher(App):
                 self.log(f'{path} does not exist')
                 return
 
-            self.log('{os.listdir(path)}')
+            self.log(f'listing: {os.listdir(path)}')
             for filename in glob("{}/*/android.txt".format(path)):
-                self.log(f'{filename} exist')
+                self.log(f'{filename} entry exists')
                 entry = self.read_entry(filename)
                 if entry:
                     yield entry
@@ -170,9 +156,11 @@ class Launcher(App):
 
     def create_templates(self, kivy_path):
         """Create the initial templates if a kivy folder does not  exist."""
+        self.log(f'create_template: path {kivy_path}')
+        self.log(f'exists={exists(kivy_path)}')
         if not exists(kivy_path):
             try:
-                # os.mkdir(kivy_path)
-                copytree('./templates', kivy_path)
+                os.makedirs(kivy_path)
+                copytree('./templates', kivy_path, dirs_exist_ok=True)
             except Exception as e:
                 self.log(f"Unable to create templates: {e}")
