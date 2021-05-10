@@ -178,7 +178,7 @@ android.manifest.launch_mode = standard
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
 android.arch = armeabi-v7a
 
-# android.no-compile-pyo = True
+android.no-compile-pyo = True
 
 #
 # Python for android (p4a) specific
