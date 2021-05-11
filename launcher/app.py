@@ -96,7 +96,7 @@ class Launcher(App):
 
     def start_activity(self, entry):
         if platform == "android":
-            self.start_android_activity(entry)
+            AndroidActivity.start_android_activity(self.log, entry)
         else:
             self.start_desktop_activity(entry)
 
@@ -130,29 +130,6 @@ class Launcher(App):
         cmd = Popen([sys.executable, main_py], env=env)
         cmd.communicate()
 
-    def start_android_activity(self, entry):
-        self.log('starting activity')
-        from jnius import autoclass
-        PythonActivity = autoclass("org.kivy.android.PythonActivity")
-        System = autoclass("java.lang.System")
-        activity = PythonActivity.mActivity
-        Intent = autoclass("android.content.Intent")
-        String = autoclass("java.lang.String")
-
-        j_entrypoint = String(entry.get("entrypoint"))
-        j_orientation = String(entry.get("orientation"))
-
-        self.log('creating intent')
-        intent = Intent(
-            activity.getApplicationContext(),
-            PythonActivity
-        )
-        intent.putExtra("entrypoint", j_entrypoint)
-        intent.putExtra("orientation", j_orientation)
-        self.log(f'ready to start intent {j_entrypoint} {j_orientation}')
-        activity.startActivity(intent)
-        self.log('activity started')
-        System.exit(0)
 
     def create_templates(self, kivy_path):
         """Create the initial templates if a kivy folder does not  exist."""
@@ -164,3 +141,52 @@ class Launcher(App):
                 copytree('./templates', kivy_path, dirs_exist_ok=True)
             except Exception as e:
                 self.log(f"Unable to create templates: {e}")
+
+
+class AndroidActivity:
+    """This class manages the ceation and closing of activities."""
+
+    _activity = None
+
+    @staticmethod
+    def start_android_activity(log, entry):
+        """Start a new PythonActivity based on the given entry.
+
+        Args:
+            log (callable): The log function accepting a message parameter.
+            entry (dict): A dict representing the loaded entry
+
+        """
+        log('starting activity')
+        from jnius import autoclass
+        PythonActivity = autoclass("org.kivy.android.PythonActivity")
+        System = autoclass("java.lang.System")
+        AndroidActivity._activity = activity = PythonActivity.mActivity
+        Intent = autoclass("android.content.Intent")
+        String = autoclass("java.lang.String")
+
+        j_entrypoint = String(entry.get("entrypoint"))
+        j_orientation = String(entry.get("orientation"))
+
+        log('creating intent')
+        intent = Intent(
+            activity.getApplicationContext(),
+            PythonActivity
+        )
+        intent.putExtra("entrypoint", j_entrypoint)
+        intent.putExtra("orientation", j_orientation)
+        log(f'ready to start intent {j_entrypoint} {j_orientation}')
+        activity.startActivity(intent)
+        log('activity started')
+        System.exit(0)
+
+    # @staticmethod
+    # def stop_android_activity(log):
+    #     """Stop any started PythonActivity.
+    #     Args:
+    #         log (callable): The log function accepting a message parameter.
+    #     """
+    #     log(f'Stopping PythonActivity {AndroidActivity._activity}')
+    #     if AndroidActivity._activity:
+    #         AndroidActivity._activity.finish()
+    #         AndroidActivity._activity = None
