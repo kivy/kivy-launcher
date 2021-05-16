@@ -83,8 +83,12 @@ def get_wind_speed(json_data):
 
 
 def get_weather_data(json_data, city):
-    """Return an English description of the weather details."""
-    # description_of_weather = json_data['weather'][0]['description']
+    """Return an English description of the weather details.
+
+    e.g.
+        description_of_weather = json_data['weather'][0]['description']
+    """
+
     weather_type = get_weather_type(json_data)
     temperature = get_temperature(json_data)
     wind_speed = get_wind_speed(json_data)
