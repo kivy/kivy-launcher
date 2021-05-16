@@ -1,5 +1,6 @@
 """This file contains a simple API Tool for making POST/GET req quests."""
 from json import dumps, loads
+import re
 from kivy.app import App
 from kivy.lang.builder import Builder, Factory
 from textwrap import dedent
@@ -52,7 +53,8 @@ BoxLayout:
                 size_hint: [0.3, 1]
             TextInput:
                 id: ti_url
-                text: 'http://postman-echo.com/get'
+                #text: 'http://postman-echo.com/get'
+                text: 'http://127.0.0.1:9001/zenplayer/get_state'
                 size_hint: [0.7, 1]
         BoxLayout:
             height: "40dp"
@@ -128,16 +130,27 @@ class APIToyApp(App):
         """Dislay the details of the response object."""
         text = f'Status code: {response.status_code}\nResponse type: ' \
             f'{response.headers.get("content-type")}\n\n'
-        if response.headers.get('content-type') == 'application/json':
-            text += f'{dumps(response.json(), indent=4)}'
-        else:
-            text += f'Content: {response.content.decode("UTF-8")}'
+        if response.headers.get('content-type').startswith('image/'):
+            import io
+            from kivy.core.image import Image as CoreImage
 
-        label = Factory.ResponseLabel(
-            text=text,
-            color=[0.5, 1.0, 0.5, 1.0] if response.status_code == 200 else
-            [1.0, 0.5, 0.5, 1.0])
-        self._display_widget(label)
+            data = io.BytesIO(response.content)
+            ext = response.headers.get('content-type')[6:]
+            im = CoreImage(data, ext=ext)
+
+            widget = Factory.AsyncImage()
+            widget.texture = im.texture
+        else:
+            if response.headers.get('content-type') == 'application/json':
+                text += f'{dumps(response.json(), indent=4)}'
+            else:
+                text += f'Content: {response.content.decode("UTF-8")}'
+
+            widget = Factory.ResponseLabel(
+                text=text,
+                color=[0.5, 1.0, 0.5, 1.0] if response.status_code == 200 else
+                [1.0, 0.5, 0.5, 1.0])
+        self._display_widget(widget)
 
     def _make_request_clock(self, req_type):
         """Make the given call."""
