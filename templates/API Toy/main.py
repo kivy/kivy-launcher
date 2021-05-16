@@ -1,8 +1,10 @@
 """This file contains a simple API Tool for making POST/GET req quests."""
+from json import dumps
 from kivy.app import App
 from kivy.lang.builder import Builder
 from textwrap import dedent
-from os import popen
+from kivy.clock import Clock
+import requests
 
 
 KV = dedent('''
@@ -42,7 +44,7 @@ BoxLayout:
                 size_hint: [0.3, 1]
             TextInput:
                 id: ti_url
-                text: 'http://127.0.0.1:9001'
+                text: 'http://127.0.0.1:9001/zenplayer/get_state'
                 size_hint: [0.7, 1]
         BoxLayout:
             height: "40dp"
@@ -54,6 +56,7 @@ BoxLayout:
                 id: ti_token
                 size_hint: [0.7, 1]
         Label:
+            id: lbl_response
             text: 'Tap GET or POST to retrieve a response.'
 
     BarBase:
@@ -79,7 +82,19 @@ class APIToyApp(App):
 
     def make_request(self, req_type):
         """Perform the specified type of HTTP request."""
-        pass
+        Clock.schedule_once(lambda dt: self._make_request_clock(req_type))
+
+    def _make_request_clock(self, req_type):
+        """Make the given call."""
+        meth = getattr(requests, req_type)
+        response = meth(self.main_box.ids.ti_url.text)
+
+        text = f'Status code: {response.status_code}\n\n'
+        if hasattr(response, 'json'):
+            text += f'{dumps(response.json(), indent=4)}'
+        else:
+            text += f'Content: {response.content.decode("UTF-8")}'
+        self.main_box.ids.lbl_response.text = text
 
 
 if __name__ == '__main__':
