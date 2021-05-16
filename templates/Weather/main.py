@@ -94,4 +94,6 @@ def get_weather_data(json_data, city):
         "and wind speeds reaching {} km/ph".format(city, weather_type,
                                                    temperature, wind_speed))
 
-WeatherApp().run()
+
+if __name__ == '__main__':
+    WeatherApp().run()

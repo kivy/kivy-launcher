@@ -47,8 +47,8 @@ BoxLayout:
 ''')
 
 
-class TestApp(App):
-    """Core Kivy Application object."""
+class AvailabilityApp(App):
+    """Core Kivy Application which performs server availability checks."""
 
     _running = False
     """Tracks whether on not we are still running our checks."""
@@ -87,5 +87,6 @@ class TestApp(App):
         label = self.root.ids.output_label
         label.text = label.text + '\n' + text if text else 'Starting check...'
 
+if __name__ == '__main__':
+    AvailabilityApp().run()
 
-TestApp().run()

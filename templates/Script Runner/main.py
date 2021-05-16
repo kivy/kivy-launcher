@@ -56,8 +56,11 @@ BoxLayout:
 ''')
 
 
-class TestApp(App):
-    def  build(self):
+class ScriptApp(App):
+    """Simple Kivy app showing how to run python commands."""
+
+    def build(self):
+        """Build and return the root widget."""
         self.main_box = Builder.load_string(KV)
         return self.main_box
 
@@ -69,4 +72,6 @@ class TestApp(App):
         stream = popen('python code_main.py')
         self.main_box.ids.text_output.text = stream.read()
 
-TestApp().run()
+
+if __name__ == '__main__':
+    ScriptApp().run()
