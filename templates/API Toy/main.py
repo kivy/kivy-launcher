@@ -1,5 +1,5 @@
 """This file contains a simple API Tool for making POST/GET req quests."""
-from json import dumps
+from json import dumps, loads
 from kivy.app import App
 from kivy.lang.builder import Builder
 from textwrap import dedent
@@ -55,6 +55,15 @@ BoxLayout:
             TextInput:
                 id: ti_token
                 size_hint: [0.7, 1]
+        BoxLayout:
+            height: "40dp"
+            size_hint_y: None
+            Label:
+                text: 'Payload :'
+                size_hint: [0.3, 1]
+            TextInput:
+                id: ti_payload
+                size_hint: [0.7, 1]
         Label:
             id: lbl_response
             text: 'Tap GET or POST to retrieve a response.'
@@ -87,7 +96,13 @@ class APIToyApp(App):
     def _make_request_clock(self, req_type):
         """Make the given call."""
         meth = getattr(requests, req_type)
-        response = meth(self.main_box.ids.ti_url.text)
+        token = self.main_box.ids.ti_token.text
+        headers = {"Authorization": f"Bearer {token}"} if token else None
+
+        data = self.main_box.ids.ti_payload.text
+        data = None if not data else loads(data)
+        response = meth(
+            self.main_box.ids.ti_url.text, headers=headers, data=data)
 
         text = f'Status code: {response.status_code}\n\n'
         if response.headers.get('content-type') == 'application/json':
