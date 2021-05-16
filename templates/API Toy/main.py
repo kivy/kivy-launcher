@@ -93,23 +93,34 @@ class APIToyApp(App):
         """Perform the specified type of HTTP request."""
         Clock.schedule_once(lambda dt: self._make_request_clock(req_type))
 
-    def _make_request_clock(self, req_type):
-        """Make the given call."""
-        meth = getattr(requests, req_type)
+    def _get_headers(self):
+        """Return a dictionary of the request headers, else None."""
         token = self.main_box.ids.ti_token.text
-        headers = {"Authorization": f"Bearer {token}"} if token else None
+        return {"Authorization": f"Bearer {token}"} if token else None
 
+    def _get_data(self):
+        """Return a dictionary of the request data, else None."""
         data = self.main_box.ids.ti_payload.text
-        data = None if not data else loads(data)
-        response = meth(
-            self.main_box.ids.ti_url.text, headers=headers, data=data)
+        return None if not data else loads(data)
 
-        text = f'Status code: {response.status_code}\n\n'
+    def _display_response(self, response):
+        """Dislay the details of the response object."""
+        text = f'Status code: {response.status_code}\nResponse type: ' \
+            f'{response.headers.get("content-type")}\n\n'
         if response.headers.get('content-type') == 'application/json':
             text += f'{dumps(response.json(), indent=4)}'
         else:
             text += f'Content: {response.content.decode("UTF-8")}'
         self.main_box.ids.lbl_response.text = text
+
+    def _make_request_clock(self, req_type):
+        """Make the given call."""
+        meth = getattr(requests, req_type)
+        headers = self._get_headers()
+        data = self._get_data()
+        response = meth(
+            self.main_box.ids.ti_url.text, headers=headers, data=data)
+        self._display_response(response)
 
 
 if __name__ == '__main__':
