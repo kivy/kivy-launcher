@@ -3,7 +3,6 @@
 Play, break an modify at will. :-)
 """
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
 from kivy.lang.builder import Builder
 from textwrap import dedent
 
@@ -19,7 +18,10 @@ BoxLayout:
 
 
 class TestApp(App):
-    def  build(self):
+    """Minimal Kivy App for demo purposes."""
+
+    def build(self):
+        """Build and return the root widget."""
         return Builder.load_string(KV)
 
 
