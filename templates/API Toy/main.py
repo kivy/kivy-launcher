@@ -1,10 +1,11 @@
 """This file contains a simple API Tool for making POST/GET req quests."""
 from json import dumps, loads
-import re
 from kivy.app import App
 from kivy.lang.builder import Builder, Factory
 from textwrap import dedent
 from kivy.clock import Clock
+import io
+from kivy.core.image import Image as CoreImage
 
 import requests
 
@@ -126,20 +127,19 @@ class APIToyApp(App):
         parent.remove_widget(parent.children[0])
         parent.add_widget(widget)
 
+    def _get_dispaly_image(self, response):
+        """Return a configured AsyncImage widget."""
+        data = io.BytesIO(response.content)
+        ext = response.headers.get('content-type')[6:]
+        im = CoreImage(data, ext=ext)
+        return Factory.AsyncImage(texture=im.texture)
+
     def _display_response(self, response):
         """Dislay the details of the response object."""
         text = f'Status code: {response.status_code}\nResponse type: ' \
             f'{response.headers.get("content-type")}\n\n'
         if response.headers.get('content-type').startswith('image/'):
-            import io
-            from kivy.core.image import Image as CoreImage
-
-            data = io.BytesIO(response.content)
-            ext = response.headers.get('content-type')[6:]
-            im = CoreImage(data, ext=ext)
-
-            widget = Factory.AsyncImage()
-            widget.texture = im.texture
+            widget = self._get_dispaly_image(response)
         else:
             if response.headers.get('content-type') == 'application/json':
                 text += f'{dumps(response.json(), indent=4)}'
