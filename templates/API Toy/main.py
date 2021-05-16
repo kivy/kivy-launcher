@@ -45,7 +45,7 @@ BoxLayout:
                 size_hint: [0.3, 1]
             TextInput:
                 id: ti_url
-                text: 'http://127.0.0.1:9001/zenplayer/get_state'
+                text: 'http://postman-echo.com/get'
                 size_hint: [0.7, 1]
         BoxLayout:
             height: "40dp"
@@ -56,6 +56,7 @@ BoxLayout:
             TextInput:
                 id: ti_token
                 size_hint: [0.7, 1]
+                hint_text: 'The Bearer Token so use. Leave blank for None.'
         BoxLayout:
             height: "40dp"
             size_hint_y: None
@@ -65,10 +66,13 @@ BoxLayout:
             TextInput:
                 id: ti_payload
                 size_hint: [0.7, 1]
+                hint_text: 'The data payload so use. Leave blank for None.'
         Label:
             id: lbl_response
             text: 'Tap GET or POST to retrieve a response.'
-
+            text_size: root.width * 0.9, None
+            halign: 'center'
+            size: self.texture_size
     BarBase:
         Button:
             text: 'GET'
@@ -76,6 +80,12 @@ BoxLayout:
         Button:
             text: 'POST'
             on_press: app.make_request('post')
+        Button:
+            text: 'PUT'
+            on_press: app.make_request('put')
+        Button:
+            text: 'DELETE'
+            on_press: app.make_request('delete')
         Button:
             text: 'Close'
             on_press: app.stop()
