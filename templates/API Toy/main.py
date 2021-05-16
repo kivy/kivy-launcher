@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from textwrap import dedent
 from kivy.clock import Clock
+
 import requests
 
 
@@ -111,7 +112,10 @@ class APIToyApp(App):
             text += f'{dumps(response.json(), indent=4)}'
         else:
             text += f'Content: {response.content.decode("UTF-8")}'
+
         self.main_box.ids.lbl_response.text = text
+        self.main_box.ids.lbl_response.color = [0.5, 1.0, 0.5, 1.0] \
+            if response.status_code == 200 else [1.0, 0.5, 0.5, 1.0]
 
     def _make_request_clock(self, req_type):
         """Make the given call."""
