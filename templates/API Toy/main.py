@@ -69,7 +69,7 @@ BoxLayout:
                 hint_text: 'The data payload so use. Leave blank for None.'
         Label:
             id: lbl_response
-            text: 'Tap GET or POST to retrieve a response.'
+            text: 'Tap GET, POST, PUT or DELETE to retrieve a response.'
             text_size: root.width * 0.9, None
             halign: 'center'
             size: self.texture_size
