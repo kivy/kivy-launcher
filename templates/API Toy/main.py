@@ -132,9 +132,13 @@ class APIToyApp(App):
         meth = getattr(requests, req_type)
         headers = self._get_headers()
         data = self._get_data()
-        response = meth(
-            self.main_box.ids.ti_url.text, headers=headers, data=data)
-        self._display_response(response)
+        try:
+            response = meth(
+                self.main_box.ids.ti_url.text, headers=headers, data=data)
+            self._display_response(response)
+        except Exception as e:
+            self.main_box.ids.lbl_response.text = f"Error calling API: {e}"
+            self.main_box.ids.lbl_response.color = [1.0, 0.5, 0.5, 1.0]
 
 
 if __name__ == '__main__':
