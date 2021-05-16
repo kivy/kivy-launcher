@@ -1,7 +1,7 @@
 """This file contains a simple API Tool for making POST/GET req quests."""
 from json import dumps, loads
 from kivy.app import App
-from kivy.lang.builder import Builder
+from kivy.lang.builder import Builder, Factory
 from textwrap import dedent
 from kivy.clock import Clock
 
@@ -22,6 +22,12 @@ KV = dedent('''
             pos: self.pos
             size: self.size
 
+<ResponseLabel@Label>:
+    text_size: root.width * 0.9, None
+    halign: 'center'
+    size: self.texture_size
+
+
 BoxLayout:
     orientation: 'vertical'
     Label:
@@ -36,6 +42,7 @@ BoxLayout:
         text: 'API Toy'
         font_size: '20dp'
     BoxLayout:
+        id: response_box
         orientation: 'vertical'
         BoxLayout:
             height: "40dp"
@@ -67,12 +74,9 @@ BoxLayout:
                 id: ti_payload
                 size_hint: [0.7, 1]
                 hint_text: 'The data payload so use. Leave blank for None.'
-        Label:
-            id: lbl_response
+        ResponseLabel:
             text: 'Tap GET, POST, PUT or DELETE to retrieve a response.'
-            text_size: root.width * 0.9, None
-            halign: 'center'
-            size: self.texture_size
+
     BarBase:
         Button:
             text: 'GET'
@@ -114,6 +118,12 @@ class APIToyApp(App):
         data = self.main_box.ids.ti_payload.text
         return None if not data else loads(data)
 
+    def _display_widget(self, widget):
+        """Place the given widget in the dislay area."""
+        parent = self.main_box.ids.response_box
+        parent.remove_widget(parent.children[0])
+        parent.add_widget(widget)
+
     def _display_response(self, response):
         """Dislay the details of the response object."""
         text = f'Status code: {response.status_code}\nResponse type: ' \
@@ -123,9 +133,11 @@ class APIToyApp(App):
         else:
             text += f'Content: {response.content.decode("UTF-8")}'
 
-        self.main_box.ids.lbl_response.text = text
-        self.main_box.ids.lbl_response.color = [0.5, 1.0, 0.5, 1.0] \
-            if response.status_code == 200 else [1.0, 0.5, 0.5, 1.0]
+        label = Factory.ResponseLabel(
+            text=text,
+            color=[0.5, 1.0, 0.5, 1.0] if response.status_code == 200 else
+            [1.0, 0.5, 0.5, 1.0])
+        self._display_widget(label)
 
     def _make_request_clock(self, req_type):
         """Make the given call."""
@@ -137,8 +149,9 @@ class APIToyApp(App):
                 self.main_box.ids.ti_url.text, headers=headers, data=data)
             self._display_response(response)
         except Exception as e:
-            self.main_box.ids.lbl_response.text = f"Error calling API: {e}"
-            self.main_box.ids.lbl_response.color = [1.0, 0.5, 0.5, 1.0]
+            self._display_widget(Factory.ResponseLabel(
+                text=f"Error calling API: {e}",
+                color=[1.0, 0.5, 0.5, 1.0]))
 
 
 if __name__ == '__main__':
