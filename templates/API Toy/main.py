@@ -90,7 +90,7 @@ class APIToyApp(App):
         response = meth(self.main_box.ids.ti_url.text)
 
         text = f'Status code: {response.status_code}\n\n'
-        if hasattr(response, 'json'):
+        if response.headers.get('content-type') == 'application/json':
             text += f'{dumps(response.json(), indent=4)}'
         else:
             text += f'Content: {response.content.decode("UTF-8")}'
