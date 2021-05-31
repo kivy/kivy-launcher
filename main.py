@@ -21,7 +21,7 @@ def dispatch():
     import os
 
     # desktop launch
-    print("dispathc!")
+    print("dispatch!")
     entrypoint = os.environ.get("KIVYLAUNCHER_ENTRYPOINT")
     if entrypoint is not None:
         return run_entrypoint(entrypoint)
