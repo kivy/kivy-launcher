@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [ main ]
+    branches: [ rework ]
   pull_request:
-    branches: [ main ]
+    branches: [ rework ]
 
 jobs:
   build:
