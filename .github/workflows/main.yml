@@ -1,0 +1,13 @@
+- name: Pylint action
+  # You may pin to the exact commit or the version.
+  # uses: gabriel-milan/action-pylint@5a2e0c4a6af3a7fac3c45e724b96d45f2a7a4352
+  uses: gabriel-milan/action-pylint@v1
+  with:
+    # GitHub token
+    GITHUB_TOKEN: 
+    # Path of files
+    path: 
+    # If true, the action will fail if pylint finds errors (default is true)
+    fail: # default is true
+    # If true, the action will send a PR message if pylint finds errors (default is true)
+    pr-message: # default is true
