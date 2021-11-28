@@ -93,7 +93,9 @@ class Launcher(App):
         data["entrypoint"] = join(dirname(filename), "main.py")
         data["path"] = dirname(filename)
         icon = join(data["path"], "icon.png")
+        print(icon)
         if exists(icon):
+            print(hello)
             data["icon"] = icon
         return data
 
