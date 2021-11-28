@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = Kivy Launcher
+title = Kivy Launcher For Pygame
 
 # (str) Package name
-package.name = launcher
+package.name = pygame_launcher
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.kivy
+package.domain = org.pygame
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, android
+requirements = kivy,android,python3,pygame,sdl2,sdl2_mixer,sdl2_image,sdl2_ttf,png
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
