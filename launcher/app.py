@@ -52,7 +52,7 @@ class Launcher(App):
             data.append({
                 "data_title": entry.get("title", "- no title -"),
                 "data_path": entry.get("path"),
-                "data_logo": entry.get("logo", "data/logo/kivy-icon-64.png"),
+                "data_logo": entry.get("icon", "data/logo/kivy-icon-64.png"),
                 "data_orientation": entry.get("orientation", ""),
                 "data_author": entry.get("author", ""),
                 "data_entry": entry
