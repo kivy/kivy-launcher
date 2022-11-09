@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Kivy Launcher
+title = (UO) Kivy Launcher
 
 # (str) Package name
-package.name = launcher
+package.name = unofficial_launcher
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.kivy
@@ -36,7 +36,8 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, android
+requirements = python3==3.9.9,kivy==master,hostpython3==3.9.9,android,asynckivy,asyncgui,kivy_garden.i18n
+
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -52,7 +53,7 @@ requirements = kivy, android
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = portrait
+orientation = all
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
