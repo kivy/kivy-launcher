@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = python3==3.9.9,kivy==master,hostpython3==3.9.9,android,asynckivy,asyncgui,kivy_garden.i18n
+requirements = python3==3.9.13,kivy==master,hostpython3==3.9.13,android,asynckivy,asyncgui,kivy_garden.i18n,opencv-python,numpy,opencv-contrib-python,time,core,imgproc,calib3d
 
 
 # (str) Custom source folders for requirements
