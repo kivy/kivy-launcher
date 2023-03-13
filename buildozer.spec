@@ -68,7 +68,7 @@ orientation = portrait
 osx.python_version = 3
 
 # Kivy version to use
-osx.kivy_version = 1.9.1
+# osx.kivy_version = 1.9.1
 
 #
 # Android specific
@@ -85,7 +85,7 @@ fullscreen = 0
 #android.presplash_color = #FFFFFF
 
 # (int) Android API to use
-#android.api = 19
+# android.api = 30
 
 # (int) Minimum API required
 #android.minapi = 9
@@ -94,7 +94,7 @@ fullscreen = 0
 #android.sdk = 20
 
 # (str) Android NDK version to use
-android.ndk = 23b
+# android.ndk = 25
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -144,7 +144,7 @@ android.ndk = 23b
 #android.gradle_dependencies =
 
 # (str) python-for-android branch to use, defaults to stable
-p4a.branch = master
+p4a.branch = develop
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
@@ -176,7 +176,7 @@ android.manifest.launch_mode = standard
 #android.copy_libs = 1
 
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
-android.arch = armeabi-v7a
+android.archs = armeabi-v7a,arm64-v8a
 
 #
 # Python for android (p4a) specific
