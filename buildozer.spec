@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, android
+requirements = python3, kivy, android, soupsieve, beautifulsoup4
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -65,10 +65,10 @@ orientation = portrait
 # author = © Copyright Info
 
 # change the major version of python used by the app
-osx.python_version = 3
+osx.python_version = 3.8
 
 # Kivy version to use
-# osx.kivy_version = 1.9.1
+osx.kivy_version = 2.3.0
 
 #
 # Android specific
@@ -85,19 +85,16 @@ fullscreen = 0
 #android.presplash_color = #FFFFFF
 
 # (int) Android API to use
-# android.api = 30
+android.api = 34
 
 # (int) Minimum API required
-#android.minapi = 9
-
-# (int) Android SDK version to use
-#android.sdk = 20
+android.minapi = 26
 
 # (str) Android NDK version to use
-# android.ndk = 25
+android.ndk = 25b
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
+# android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
 #android.ndk_path =
@@ -144,13 +141,15 @@ fullscreen = 0
 #android.gradle_dependencies =
 
 # (str) python-for-android branch to use, defaults to stable
-p4a.branch = master
+p4a.branch = release-2024.01.21
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
 
 # (str) launchMode to set for the main activity
 android.manifest.launch_mode = standard
+
+android.extra_manifest_application_arguments = ./android/extra_manifest_application_arguments.xml
 
 # (list) Android additionnal libraries to copy into libs/armeabi
 #android.add_libs_armeabi = libs/android/*.so
@@ -176,7 +175,7 @@ android.manifest.launch_mode = standard
 #android.copy_libs = 1
 
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
-android.archs = armeabi-v7a,arm64-v8a
+android.archs = arm64-v8a
 
 android.accept_sdk_license = True
 
@@ -213,6 +212,7 @@ android.accept_sdk_license = True
 
 # (list) Permissions
 [app:android.permissions]
+MANAGE_EXTERNAL_STORAGE
 READ_EXTERNAL_STORAGE
 WRITE_EXTERNAL_STORAGE
 ACCESS_LOCATION_EXTRA_COMMANDS
@@ -256,7 +256,7 @@ WRITE_SYNC_SETTINGS
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
-log_level = 2
+log_level = 1
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 0

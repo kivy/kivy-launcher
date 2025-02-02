@@ -42,7 +42,7 @@
         size_hint_x: None
         width: self.texture_size[0]
         font_size: dp(16)
-        font_name: "data/Roboto-Medium.ttf"
+        font_name: "data/msyahei.ttf"
 
     IconButton:
         text: ICON_REFRESH
@@ -82,7 +82,7 @@
         LLabel:
             text: root.data_title
             color: rgba("#454547")
-            font_name: "data/Roboto-Medium.ttf"
+            font_name: "data/msyahei.ttf"
             font_size: dp(13)
         LLabel:
             text: root.data_author
@@ -115,41 +115,18 @@ GridLayout:
                 default_size: None, dp(48)
                 default_size_hint: 1, None
 
-        RecycleView:
-            viewclass: 'LogLabel'
-            data: [{'text': log} for log in app.logs]
-            _top: 0
-            pos_hint: {'top': self._top, 'x': 0}
-            visible: app.display_logs
-            on_visible:
-                A.cancel_all(self, '_top')
-                A(_top=1 if self.visible else 0, d=.3, t='out_quad').start(self)
+        TextInput:
+            text: app.logs
+            multiline: True
+            pos_hint: {'top': 1 if app.display_logs else 0, 'x': 0}
 
-            canvas.before:
-                Color:
-                    rgba: rgba("#CCCCCCCC")
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
-            RecycleBoxLayout:
-                orientation: 'vertical'
-                size_hint_y: None
-                height: self.minimum_height
-                default_size_hint: None, None
-                default_size: 0, 20
-                padding: 5, 5
-
-        Label:
+        TextInput:
+            id: tl
+            multiline: True
             text:
                 '''
                 Please install applications in one of the following directories
                 - {}
                 '''.format('\n -'.join(app.paths))
-            pos_hint: {'pos': (0, 0)}
-            color: rgba("#222222" if not rv.data else "#00000000")
-
-<LogLabel@Label>:
-    color: rgba("#222222FF")
-    pos_hint: {'x': 0}
-    width: self.texture_size[0]
+            pos_hint: {'top': 0 if app.display_logs else 1, 'x': 0}
