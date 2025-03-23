@@ -1,0 +1,80 @@
+import tkinter as tk
+
+# Función para enviar un mensaje
+def enviar_mensaje():
+    mensaje = entry_mensaje.get()
+    if mensaje != "":
+        # Mostrar el mensaje en el chat
+        chat.config(state=tk.NORMAL)
+        chat.insert(tk.END, "Tú: " + mensaje + "\n")
+        chat.config(state=tk.DISABLED)
+        entry_mensaje.delete(0, tk.END)
+
+# Crear ventana principal
+ventana = tk.Tk()
+ventana.title("App de Mensajes")
+ventana.geometry("400x500")
+
+# Crear área de chat
+chat = tk.Text(ventana, width=50, height=20, wrap=tk.WORD, state=tk.DISABLED)
+chat.pack(pady=10)
+
+# Crear caja de texto para escribir mensajes
+entry_mensaje = tk.Entry(ventana, width=40)
+entry_mensaje.pack(pady=10)
+
+# Crear botón de enviar mensaje
+boton_enviar = tk.Button(ventana, text="Enviar", command=enviar_mensaje)
+boton_enviar.pack(pady=5)
+
+# Iniciar la aplicación
+ventana.mainloop()
+import socket
+import threading
+
+# Lista para almacenar clientes conectados
+clientes = []
+
+# Función para manejar la comunicación con cada cliente
+def manejar_cliente(cliente_socket, cliente_address):
+    print(f"Conexión establecida con {cliente_address}")
+    while True:
+        try:
+            mensaje = cliente_socket.recv(1024).decode('utf-8')
+            if mensaje:
+                print(f"Mensaje de {cliente_address}: {mensaje}")
+                # Enviar el mensaje a todos los clientes
+                broadcast(mensaje, cliente_socket)
+            else:
+                break
+        except:
+            break
+
+    cliente_socket.close()
+    clientes.remove(cliente_socket)
+    print(f"Conexión cerrada con {cliente_address}")
+
+# Función para enviar mensajes a todos los clientes conectados
+def broadcast(mensaje, cliente_socket):
+    for cliente in clientes:
+        if cliente != cliente_socket:
+            try:
+                cliente.send(mensaje.encode('utf-8'))
+            except:
+                cliente.close()
+                clientes.remove(cliente)
+
+# Configurar el servidor
+def iniciar_servidor():
+    servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    servidor.bind(('0.0.0.0', 5555))  # Usar el puerto 5555
+    servidor.listen(5)
+    print("Servidor escuchando...")
+
+    while True:
+        cliente_socket, cliente_address = servidor.accept()
+        clientes.append(cliente_socket)
+        thread = threading.Thread(target=manejar_cliente, args=(cliente_socket, cliente_address))
+        thread.start()
+
+iniciar_servidor()
