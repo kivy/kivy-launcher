@@ -1,51 +1,95 @@
-name: CI
+name: Kivy Launcher Custom Build
+
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    # every 1st day of the month at 10:30
-    - cron: '30 10 1 * *'
+  workflow_dispatch:
+    inputs:
+      arch:
+        description: "Comma-separated Android architectures"
+        required: true
+        default: "armeabi-v7a,arm64-v8a"
+      artifact:
+        description: "Artifact type"
+        required: true
+        default: "apk"
+        type: choice
+        options: ["apk", "aab", "aar"]
+      bootstrap:
+        description: "python-for-android bootstrap"
+        required: true
+        default: "sdl2"
+        type: choice
+        options: ["sdl2", "service_library", "service_only", "webview", "qt"]
+      mode:
+        description: "Build mode"
+        required: true
+        default: "debug"
+        type: choice
+        options: ["debug", "release"]
+      os:
+        description: "Runner operating system"
+        required: true
+        default: "ubuntu-latest"
+        type: choice
+        options: ["ubuntu-latest", "macos-latest"]
+      requirements:
+        description: "Comma-separated Python requirements"
+        required: true
+        default: "python3,kivy"
+
+permissions:
+  contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    name: Build Kivy launcher (${{{{ inputs.arch }}}} | ${{{{ inputs.artifact }}}} | ${{{{ inputs.bootstrap }}}})
+    runs-on: ${{{{ inputs.os }}}}
+    timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v3
-
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
+      - name: Checkout this Kivy launcher project
+        uses: actions/checkout@v4
+      - name: Install Java and build tools
+        if: runner.os == 'Linux'
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install python-for-android
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install python-for-android cython
+      - name: Build APK/AAB/AAR
+        env:
+          JAVA_HOME: ${{{{ runner.os == 'Linux' && '/usr/lib/jvm/java-17-openjdk-amd64' || '' }}}}
+          ARCHS: ${{{{ inputs.arch }}}}
+          ARTIFACT: ${{{{ inputs.artifact }}}}
+          BOOTSTRAP: ${{{{ inputs.bootstrap }}}}
+          MODE: ${{{{ inputs.mode }}}}
+          REQUIREMENTS: ${{{{ inputs.requirements }}}}
         shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
-
-      - uses: actions/cache@v3
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: Build with Buildozer
         run: |
-          pip3 install --user --upgrade buildozer Cython virtualenv
-          export PATH=$PATH:~/.local/bin/
-          export APP_ANDROID_ACCEPT_SDK_LICENSE=1 
-          export BUILDOZER_WARN_ON_ROOT=0
-          sudo apt update 
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev 
-          cd ${{ github.workspace }}
-          buildozer android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+          set -euo pipefail
+          mkdir -p dist .p4a
+          args=(--private . --package org.example.kivycodeeditor --name "Kivy Code Editor" \
+            --version 0.1 --bootstrap "$BOOTSTRAP" --requirements "$REQUIREMENTS" \
+            --orientation portrait --storage-dir .p4a)
+          IFS=',' read -ra archs <<< "$ARCHS"
+          for arch in "${{archs[@]}}"; do
+            arch="$(echo "$arch" | xargs)"
+            [[ -n "$arch" ]] || continue
+            p4a "$ARTIFACT" "${{args[@]}}" --arch "$arch" --android-api 35
+          done
+          shopt -s nullglob
+          files=(bin/*.apk bin/*.aab bin/*.aar)
+          ((${#files[@]})) || { echo "No build artifacts found"; exit 1; }
+          cp "${{files[@]}}" dist/
+      - name: Upload built artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: package
-          path: bin/*.apk
+          name: kivy-code-editor-${{{{ inputs.os }}}}-${{{{ inputs.bootstrap }}}}-${{{{ inputs.artifact }}}}
+          path: dist/*
+          if-no-files-found: error
+          
