@@ -1,51 +1,114 @@
-name: CI
+name: Package Android APK with p4a
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
-    # every 1st day of the month at 10:30
-    - cron: '30 10 1 * *'
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+    - name: Set up Java JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-      - uses: actions/cache@v3
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          git \
+          zip \
+          unzip \
+          autoconf \
+          libtool \
+          pkg-config \
+          zlib1g-dev \
+          libncurses5-dev \
+          libssl-dev \
+          libgdbm-dev \
+          libsqlite3-dev \
+          libffi-dev \
+          libbz2-dev \
+          libreadline-dev \
+          libncursesw5-dev \
+          libgdbm-compat-dev \
+          libmpdec-dev \
+          liblzma-dev \
+          libffi-dev \
+          uuid-dev
 
-      - name: Build with Buildozer
-        run: |
-          pip3 install --user --upgrade buildozer Cython virtualenv
-          export PATH=$PATH:~/.local/bin/
-          export APP_ANDROID_ACCEPT_SDK_LICENSE=1 
-          export BUILDOZER_WARN_ON_ROOT=0
-          sudo apt update 
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev 
-          cd ${{ github.workspace }}
-          buildozer android debug
+    - name: Install Python Toolchains
+      run: |
+        pip install --upgrade pip
+        pip install python-for-android cython==0.29.36
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: package
-          path: bin/*.apk
+    - name: Cache Android SDK and NDK
+      id: cache-android
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.android
+          ~/android-tools
+        key: ${{ runner.os }}-android-toolchain-r25b
+
+    - name: Install Android Command Line Tools & NDK
+      if: steps:cache-android.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p ~/android-tools/cmdline-tools
+        cd ~/android-tools
+        
+        # Download Android Commandline tools
+        wget -q https://google.com -O cmdline.zip
+        unzip -q cmdline.zip -d cmdline-tools/
+        mv cmdline-tools/cmdline-tools cmdline-tools/latest
+        
+        # Download Stable Android NDK
+        wget -q https://google.com -O ndk.zip
+        unzip -q ndk.zip
+        rm cmdline.zip ndk.zip
+
+    - name: Accept Android SDK Licenses
+      run: |
+        export PATH=$PATH:$HOME/android-tools/cmdline-tools/latest/bin
+        yes | sdkmanager --licenses --sdk_root=$HOME/android-tools
+        sdkmanager --sdk_root=$HOME/android-tools "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+    - name: Build Android APK via Python-for-Android
+      run: |
+        # Export toolchain environments explicitly 
+        export ANDROIDSDK="$HOME/android-tools"
+        export ANDROIDNDK="$HOME/android-tools/android-ndk-r25b"
+        export ANDROIDAPI="33"
+        export NDKAPI="24"
+        
+        # Trigger single-architecture build optimization
+        p4a apk \
+          --private . \
+          --package=org.kivy.kivylauncher \
+          --name="Kivy Launcher" \
+          --version=1.0 \
+          --bootstrap=sdl2 \
+          --requirements=python3==3.11.9,kivy \
+          --arch=arm64-v8a \
+          --dist_name=kivylauncher_dist
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kivy-Launcher-arm64-v8a
+        path: "*.apk"
