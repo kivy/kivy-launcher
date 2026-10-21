@@ -1,51 +1,69 @@
-name: CI
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    # every 1st day of the month at 10:30
-    - cron: '30 10 1 * *'
+name: Android Integration
+
+on: [push, pull_request]
+
+env:
+  PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: 0
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  Integration:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - uses: actions/checkout@v7
+
+      - name: Setup environment
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Verify Buildozer
+        run: buildozer --help
+
+      - name: Verify Buildozer spec
+        run: buildozer init
+
+      - name: SDK, NDK, and p4a download
         shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
-
-      - uses: actions/cache@v3
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: Build with Buildozer
         run: |
-          pip3 install --user --upgrade buildozer Cython virtualenv
-          export PATH=$PATH:~/.local/bin/
-          export APP_ANDROID_ACCEPT_SDK_LICENSE=1 
-          export BUILDOZER_WARN_ON_ROOT=0
-          sudo apt update 
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev 
-          cd ${{ github.workspace }}
-          buildozer android debug
+          sed -i.bak 's/^# *android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
+          sed -i.bak 's/^p4a.branch = master/p4a.branch = develop/' buildozer.spec
+          buildozer android p4a -- --help
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y automake libltdl-dev
+
+      - name: Debug Build (APK)
+        run: buildozer android debug
+
+      - name: Release Build (APK)
+        if: runner.os == 'Linux'
+        env:
+          BUILDOZER_ALLOW_ORG_TEST_DOMAIN: '1'
+        run: buildozer android release
+
+      - name: Upload APK artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: kivy-launcher-${{ runner.os }}-apk
           path: bin/*.apk
+          if-no-files-found: warn
+          retention-days: 14
